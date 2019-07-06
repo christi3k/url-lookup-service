@@ -1,26 +1,11 @@
 import asyncio
 from signal import SIGINT, SIGTERM
-from typing import Callable
-from aiohttp import web
 import logging
-import urllookup.web_app as web_app
 from urllookup.server_app import ServerApp
-# from urllookup.route_handlers import RouteHandler
+from urllookup.utils import signal_handler
 
 logger = logging.getLogger(__package__)
 logger.debug('core module loaded')
-
-def signal_handler(sig) -> None:
-    """
-    Stop the event look upon SIGINT and SIGTERM.
-
-    Remove handlers afterwards so program can continue gracefully shutting down.
-    """
-    loop = asyncio.get_event_loop()
-    loop.stop()
-    print(f'Got signal: {sig!s}, shutting down.')
-    loop.remove_signal_handler(SIGTERM)
-    loop.add_signal_handler(SIGINT, lambda: None)
 
 def main():
     """
