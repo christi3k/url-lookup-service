@@ -14,16 +14,23 @@ class UrlLookupTestCase(AioHTTPTestCase):
     # the unittest_run_loop decorator can be used in tandem with
     # the AioHTTPTestCase to simplify running
     # tests that are asynchronous
-    @unittest_run_loop
-    async def test_anon(self):
-        resp = await self.client.request("GET", "/")
-        assert resp.status == 200
-        text = await resp.text()
-        assert "Hello, Anonymous" in text
+    # @unittest_run_loop
+    # async def test_anon(self):
+        # resp = await self.client.request("GET", "/")
+        # assert resp.status == 200
+        # text = await resp.text()
+        # assert "Hello, Anonymous" in text
+
+    # @unittest_run_loop
+    # async def test_christie(self):
+        # resp = await self.client.request("GET", "/Christie")
+        # assert resp.status == 200
+        # text = await resp.text()
+        # assert "Hello, Christie" in text
 
     @unittest_run_loop
-    async def test_christie(self):
-        resp = await self.client.request("GET", "/Christie")
+    async def test_urlinfo(self):
+        resp = await self.client.request("GET", '/urlinfo/1/cnn.com%3A443/badstuff.html%3Fgivemeit%3Dyes')
         assert resp.status == 200
         text = await resp.text()
-        assert "Hello, Christie" in text
+        assert "OK" in text
