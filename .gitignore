@@ -122,3 +122,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# vim-specific local configs
+.ycm_extra_conf.py
