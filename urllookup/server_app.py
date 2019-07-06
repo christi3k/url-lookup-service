@@ -6,21 +6,22 @@ import urllookup.web_app as web_app
 
 logger = logging.getLogger(__package__)
 
-class ServerApp:
+class ServerApp():
     """
     Class that generates the "Sever" app, which is an AppRunner for our main web app.
     """
-    def __init__(self) -> None:
+    def __init__(self, host: str = '127.0.0.1', port: int = 9002) -> None:
         """
         Initialize properties we'll need later.
 
         TODO: parameterize host and port and possibly logging configuration.
         """
         self.loop = asyncio.get_event_loop()
-        self.app: Callable[[], web.Application] = web_app.get_app
+        # self.app: Callable[[], web.Application] = web_app.get_app
+        self.app: Callable[[], web.Application] = None
         self.runner: web.AppRunner
-        self.host: str = '127.0.0.1'
-        self.port: int = 9002
+        self.host: str = host
+        self.port: int = port 
         # set aithhtp access logging to package's (file) logger
         self.access_log: logging.Logger = logger
 
@@ -30,9 +31,10 @@ class ServerApp:
 
         We'll do this first in the event loop, with run_until_complete().
         """
-        self.runner = web.AppRunner(self.app())
+        self.runner = web.AppRunner(await web_app.get_app())
         await self.runner.setup()
         site = web.TCPSite(self.runner, self.host, self.port)
+        logger.debug('Starting server on host: %s and port: %s', self.host, self.port)
         await site.start()
 
     async def stop(self) -> None:

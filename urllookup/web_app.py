@@ -4,7 +4,7 @@ from urllookup.route_handlers import RouteHandler
 
 logger = logging.getLogger(__package__)
 
-def get_app() -> web.Application:
+async def get_app() -> web.Application:
     """
     Set up the web app that our AppRunner (ServerApp) will serve.
 

@@ -8,7 +8,7 @@ class UrlLookupTestCase(AioHTTPTestCase):
         """
         Override the get_app method to return your application.
         """
-        app = urllookup.web_app.get_app()
+        app = await urllookup.web_app.get_app()
         return app
 
     # the unittest_run_loop decorator can be used in tandem with
