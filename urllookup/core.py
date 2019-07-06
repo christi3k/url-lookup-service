@@ -1,20 +1,12 @@
 import asyncio
 from signal import SIGINT, SIGTERM
-import logging
 from typing import Callable
 from aiohttp import web
+import logging
+from urllookup.route_handlers import RouteHandler
 
 logger = logging.getLogger(__package__)
 logger.debug('core module loaded')
-
-async def handle(request: web.Request) -> web.Response:
-    """
-    Generic handler for a request, just to get us going.
-    """
-    name: str = request.match_info.get('name', "Anonymous")
-    logger.debug('Name: ' + name)
-    text: str = "Hello, " + name
-    return web.Response(text=text)
 
 def get_web_app() -> web.Application:
     """
@@ -27,8 +19,10 @@ def get_web_app() -> web.Application:
 
     router = app.router
 
-    router.add_get('/', handle)
-    router.add_get('/{name}', handle)
+    handler = RouteHandler()
+
+    router.add_get('/', handler.handle)
+    router.add_get('/{name}', handler.handle)
 
     return app
 
