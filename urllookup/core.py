@@ -4,47 +4,11 @@ from typing import Callable
 from aiohttp import web
 import logging
 import urllookup.web_app as web_app
+from urllookup.server_app import ServerApp
 # from urllookup.route_handlers import RouteHandler
 
 logger = logging.getLogger(__package__)
 logger.debug('core module loaded')
-
-class ServerApp:
-    """
-    Class that generates the "Sever" app, which is an AppRunner for our main web app.
-    """
-    def __init__(self) -> None:
-        """
-        Initialize properties we'll need later.
-
-        TODO: parameterize host and port and possibly logging configuration.
-        """
-        self.loop = asyncio.get_event_loop()
-        self.app: Callable[[], web.Application] = web_app.get_app
-        self.runner: web.AppRunner
-        self.host: str = '127.0.0.1'
-        self.port: int = 9002
-        # set aithhtp access logging to package's (file) logger
-        self.access_log: logging.Logger = logger
-
-    async def start(self) -> None:
-        """
-        Start the application server and serve our web app.
-
-        We'll do this first in the event loop, with run_until_complete().
-        """
-        self.runner = web.AppRunner(self.app())
-        await self.runner.setup()
-        site = web.TCPSite(self.runner, self.host, self.port)
-        await site.start()
-
-    async def stop(self) -> None:
-        """
-        Stop the application server and do required cleanup.
-
-        We'll run this using run_until_complete() AFTER run_forever part of event loop completes.
-        """
-        await self.runner.cleanup()
 
 def signal_handler(sig) -> None:
     """
@@ -62,7 +26,6 @@ def main():
     """
     Here we create our ServerApp, set signals handlers, and manage main execution of event loop.
     """
-
     server_app: None = ServerApp()
 
     # get the current event loop
