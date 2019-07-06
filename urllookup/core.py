@@ -3,28 +3,11 @@ from signal import SIGINT, SIGTERM
 from typing import Callable
 from aiohttp import web
 import logging
-from urllookup.route_handlers import RouteHandler
+import urllookup.web_app as web_app
+# from urllookup.route_handlers import RouteHandler
 
 logger = logging.getLogger(__package__)
 logger.debug('core module loaded')
-
-def get_web_app() -> web.Application:
-    """
-    Set up the web app that our AppRunner (ServerApp) will serve.
-
-    TODO: Figure out if this should be blocking or not.
-    """
-    logger.debug('setting up app server')
-    app = web.Application()
-
-    router = app.router
-
-    handler = RouteHandler()
-
-    router.add_get('/', handler.handle)
-    router.add_get('/{name}', handler.handle)
-
-    return app
 
 class ServerApp:
     """
@@ -37,7 +20,7 @@ class ServerApp:
         TODO: parameterize host and port and possibly logging configuration.
         """
         self.loop = asyncio.get_event_loop()
-        self.app: Callable[[], web.Application] = get_web_app
+        self.app: Callable[[], web.Application] = web_app.get_app
         self.runner: web.AppRunner
         self.host: str = '127.0.0.1'
         self.port: int = 9002
