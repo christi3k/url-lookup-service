@@ -1,5 +1,6 @@
 import asyncio
 from signal import SIGINT, SIGTERM
+from typing import List
 import logging
 from urllookup.server_app import ServerApp
 from urllookup.utils import signal_handler
@@ -11,10 +12,14 @@ def main():
     """
     Here we create our ServerApp, set signals handlers, and manage main execution of event loop.
     """
-    server_app: None = ServerApp()
-
     # get the current event loop
     loop = asyncio.get_event_loop()
+    num_servers: int = 1
+
+    server_apps: List = []
+    for i in range(num_servers):
+        server_apps.append(ServerApp(port=9001+i))
+        loop.create_task(server_apps[i].start())
 
     # turn on debugging TODO: Figure out where this goes
     loop.set_debug(True)
@@ -24,7 +29,12 @@ def main():
         loop.add_signal_handler(sig, signal_handler, sig)
 
     # run event loop until our app server has completed startup
-    loop.run_until_complete(server_app.start())
+    # loop.run_until_complete(server_app.start())
+
+    tasks = asyncio.Task.all_tasks()
+
+    servers = asyncio.gather(*tasks)
+    loop.run_until_complete(servers)
 
     # now run the event loop continuously
     # our ServerApp will run until the loop is stopped with SIGINT or SIGTERM
@@ -33,7 +43,12 @@ def main():
     # once the loop has been stopped with SIGINT or SIGTERM, the next running
     # of the loop is unblocked
     # next, we run the loop until stopping the app server is complete
-    loop.run_until_complete(server_app.stop())
+    for i in range(num_servers):
+        loop.create_task(server_apps[i].stop())
+
+    tasks = asyncio.Task.all_tasks()
+    servers = asyncio.gather(*tasks)
+    loop.run_until_complete(servers)
 
     # cancel currently pending tasks; this raises a CancelledError in each
     tasks = asyncio.Task.all_tasks()

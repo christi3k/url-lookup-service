@@ -18,7 +18,7 @@ class ServerApp():
         """
         self.loop = asyncio.get_event_loop()
         # self.app: Callable[[], web.Application] = web_app.get_app
-        self.app: Callable[[], web.Application] = None
+        self.app: Callable[[], web.Application]
         self.runner: web.AppRunner
         self.host: str = host
         self.port: int = port 
