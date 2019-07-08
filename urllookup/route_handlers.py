@@ -19,6 +19,12 @@ class RouteHandler:
         text: str = "Hello, " + name
         return web.Response(text=text)
 
+    async def catchall(self, request: web.Request) -> web.Response:
+        """
+        Handler for all routes not otherwise mapped.
+        """
+        return web.Response(status=404, text='YOU GOT A 404!')
+
     async def urlinfo(self, request: web.Request) -> web.Response:
         """
         Handle request for url info.

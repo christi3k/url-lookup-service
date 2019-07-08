@@ -37,3 +37,16 @@ class UrlLookupTestCase(AioHTTPTestCase):
         text = await response.text()
         expected = json.dumps({"status": "OK", "url_checked": {"host_and_port:": "cnn.com:443", "path_and_qs": "badstuff.html?givemeit=yes"}})
         assert text == expected
+
+    @unittest_run_loop
+    async def test_catchall(self):
+        # test with single-level path
+        response = await self.client.request("GET", '/badurl')
+        assert response.status == 404
+        text = await response.text()
+        assert text == 'YOU GOT A 404!'
+
+        response = await self.client.request("GET", '/badurl/one/two/three')
+        assert response.status == 404
+        text = await response.text()
+        assert text == 'YOU GOT A 404!'

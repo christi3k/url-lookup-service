@@ -21,5 +21,6 @@ async def get_app() -> web.Application:
     # router.add_get('/{name}', handler.handle)
 
     router.add_get('/urlinfo/1/{host_and_port}/{path_and_qs}', handler.urlinfo, name='check')
+    router.add_get('/{tail:.*}', handler.catchall)
 
     return app
