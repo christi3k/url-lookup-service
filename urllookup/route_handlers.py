@@ -1,4 +1,5 @@
 from aiohttp import web
+from typing import Dict
 import logging
 
 from urllookup.lookup import url_lookup
@@ -24,8 +25,11 @@ class RouteHandler:
         """
         host_and_port: str = request.match_info.get('host_and_port')
         path_and_qs: str = request.match_info.get('path_and_qs')
-        logger.debug('post and port: ' + host_and_port)
+        logger.debug('host and port: ' + host_and_port)
         logger.debug('path_and_qs: ' + path_and_qs)
         await url_lookup(host_and_port, path_and_qs)
-        text: str = 'OK'
-        return web.Response(text=text)
+        response: Dict = {
+                'status':'OK',
+                'url_checked': {'host_and_port:': host_and_port, 'path_and_qs': path_and_qs}
+                }
+        return web.json_response(response)

@@ -1,3 +1,4 @@
+import json
 from aiohttp.test_utils import AioHTTPTestCase, unittest_run_loop
 from aiohttp import web
 import urllookup.core
@@ -30,7 +31,9 @@ class UrlLookupTestCase(AioHTTPTestCase):
 
     @unittest_run_loop
     async def test_urlinfo(self):
-        resp = await self.client.request("GET", '/urlinfo/1/cnn.com%3A443/badstuff.html%3Fgivemeit%3Dyes')
-        assert resp.status == 200
-        text = await resp.text()
-        assert "OK" in text
+        response = await self.client.request("GET", '/urlinfo/1/cnn.com%3A443/badstuff.html%3Fgivemeit%3Dyes')
+        assert response.status == 200
+        assert 'application/json' == response.content_type
+        text = await response.text()
+        expected = json.dumps({"status": "OK", "url_checked": {"host_and_port:": "cnn.com:443", "path_and_qs": "badstuff.html?givemeit=yes"}})
+        assert text == expected
