@@ -1,3 +1,4 @@
+import sys
 import asyncio
 from typing import Callable, Dict
 from aiohttp import web
@@ -35,7 +36,11 @@ class ServerApp():
         await self.runner.setup()
         site = web.TCPSite(self.runner, self.config['host'], self.config['port'])
         logger.debug('Starting server on host: %s and port: %s', self.config['host'], self.config['port'])
-        await site.start()
+        try:
+            await site.start()
+        except OSError as e:
+            print(e)
+            sys.exit()
 
     async def stop(self) -> None:
         """
