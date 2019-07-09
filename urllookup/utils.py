@@ -20,18 +20,19 @@ def signal_handler(sig) -> None:
 
 def get_test_urls() -> List:
     test_urls: List = [
-        ('mozilla.org:80/index.html','ALLOW'),
-        ('mozilla.org:443/index.html','ALLOW'),
-        ('mazilla.org:80/actuallybad.html?areyousure=yes', 'DISALLOW'),
-        ('phishing4ever:443/index.html', 'DISALLOW'),
-        ('capital0ne.ru:8080/download.html', 'DISALLOW'),
-        ('capitalone.com:443','ALLOW'),
-        ('capitalone.com:443/index.html','ALLOW'),
-        ('goodsite.com:80/index.html?newuser=yes','ALLOW'),
-        ('goodsite.com:443/sites/index.html', 'ALLOW'),
-        ('washingtonpost.com:443/index.html', 'ALLOW'),
-        ('washingt0np0st.com:8080/nope.html', 'DISALLOW'),
-        ('not.actually.ebay.badsites.us:80/index.html', 'DISALLOW'),
+        ('mozilla.org:80/index.html',b'ALLOW'),
+        ('mozilla.org:443/index.html',b'ALLOW'),
+        ('mazilla.org:80/actuallybad.html?areyousure=yes', b'DISALLOW'),
+        ('phishing4ever:443/index.html', b'DISALLOW'),
+        ('capital0ne.ru:8080/download.html', b'DISALLOW'),
+        ('capitalone.com:443',b'ALLOW'),
+        ('capitalone.com:443/index.html',b'ALLOW'),
+        ('goodsite.com:80/index.html?newuser=yes',b'ALLOW'),
+        ('goodsite.com:443/sites/index.html', b'ALLOW'),
+        ('washingtonpost.com:443/index.html', b'ALLOW'),
+        ('washingt0np0st.com:8080/nope.html', b'DISALLOW'),
+        ('not.actually.ebay.badsites.us:80/index.html', b'DISALLOW'),
+        ('cnn.com:443/badstuff.html?givemeit=yes', b'DISALLOW'),
     ]
     return test_urls
 
@@ -44,6 +45,7 @@ def load_config():
     parser.add_argument("--redis-port", dest="redis_port", default="6379", help="port for redis instance")
     parser.add_argument("--redis-min", dest="redis_min", default=1, help="min size for redis pool")
     parser.add_argument("--redis-max", dest="redis_max", default=5, help="max size for redis pool")
+    parser.add_argument("--no-redis", dest="no_redis", default=False, help="max size for redis pool")
     config: Dict = vars(parser.parse_args())
     return config
 

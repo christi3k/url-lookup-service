@@ -21,15 +21,18 @@ async def get_app(config: Dict) -> web.Application:
 
     router = app.router
 
-    handler = RouteHandler()
+    if config['no_redis']:
+        redis_pool = None
 
-    conf = {'host': config['redis_host'],
-            'port': config['redis_port'],
-            'minsize': config['redis_min'],
-            'maxsize': config['redis_max']}
+    else:
+        conf = {'host': config['redis_host'],
+                'port': config['redis_port'],
+                'minsize': config['redis_min'],
+                'maxsize': config['redis_max']}
 
-    redis_pool = await setup_redis(app, conf)
-    handler.set_processor(redis_pool)
+        redis_pool = await setup_redis(app, conf)
+
+    handler = RouteHandler(redis_pool)
     await set_routes(router, handler)
 
     return app
