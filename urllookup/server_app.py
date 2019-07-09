@@ -31,7 +31,8 @@ class ServerApp():
 
         We'll do this first in the event loop, with run_until_complete().
         """
-        self.runner = web.AppRunner(await web_app.get_app())
+        app = await web_app.get_app()
+        self.runner = web.AppRunner(app)
         await self.runner.setup()
         site = web.TCPSite(self.runner, self.host, self.port)
         logger.debug('Starting server on host: %s and port: %s', self.host, self.port)
@@ -44,4 +45,3 @@ class ServerApp():
         We'll run this using run_until_complete() AFTER run_forever part of event loop completes.
         """
         await self.runner.cleanup()
-

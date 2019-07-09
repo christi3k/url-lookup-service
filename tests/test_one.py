@@ -1,6 +1,5 @@
 import json
 from aiohttp.test_utils import AioHTTPTestCase, unittest_run_loop
-from aiohttp import web
 import urllookup.core
 
 class UrlLookupTestCase(AioHTTPTestCase):
@@ -29,13 +28,15 @@ class UrlLookupTestCase(AioHTTPTestCase):
         # text = await resp.text()
         # assert "Hello, Christie" in text
 
+# redis_pool.get(url_to_lookup)
+
     @unittest_run_loop
     async def test_urlinfo(self):
         response = await self.client.request("GET", '/urlinfo/1/cnn.com%3A443/badstuff.html%3Fgivemeit%3Dyes')
         assert response.status == 200
         assert 'application/json' == response.content_type
         text = await response.text()
-        expected = json.dumps({"status": "OK", "url_checked": {"host_and_port:": "cnn.com:443", "path_and_qs": "badstuff.html?givemeit=yes"}})
+        expected = json.dumps({"status": "DISALLOWED", "url_checked": {"host_and_port:": "cnn.com:443", "path_and_qs": "badstuff.html?givemeit=yes"}})
         assert text == expected
 
     @unittest_run_loop
