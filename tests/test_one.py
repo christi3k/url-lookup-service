@@ -1,5 +1,6 @@
 import json
 from aiohttp.test_utils import AioHTTPTestCase, unittest_run_loop
+from typing import Dict
 import urllookup.core
 
 class UrlLookupTestCase(AioHTTPTestCase):
@@ -8,7 +9,8 @@ class UrlLookupTestCase(AioHTTPTestCase):
         """
         Override the get_app method to return your application.
         """
-        app = await urllookup.web_app.get_app()
+        config: Dict = {'host': '127.0.0.1', 'port': '9001', 'redis_host': '127.0.0.1', 'redis_port': '6379', 'redis_min': 1, 'redis_max': 5}
+        app = await urllookup.web_app.get_app(config)
         return app
 
     # the unittest_run_loop decorator can be used in tandem with

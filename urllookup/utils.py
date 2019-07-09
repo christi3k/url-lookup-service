@@ -1,7 +1,8 @@
 import asyncio
 from signal import SIGINT, SIGTERM
 import logging
-from typing import List
+import argparse
+from typing import List, Dict
 
 logger = logging.getLogger(__package__)
 
@@ -33,3 +34,17 @@ def get_test_urls() -> List:
         ('not.actually.ebay.badsites.us:80/index.html', 'DISALLOW'),
     ]
     return test_urls
+
+def load_config():
+    # parse command-line arguments and set config list
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--host", dest="host", default="127.0.0.1", help="address to listen on")
+    parser.add_argument("--port", dest="port", default="9001", help="port to listen on")
+    parser.add_argument("--redis-host", dest="redis_host", default="127.0.0.1", help="host for redis instance")
+    parser.add_argument("--redis-port", dest="redis_port", default="6379", help="port for redis instance")
+    parser.add_argument("--redis-min", dest="redis_min", default=1, help="min size for redis pool")
+    parser.add_argument("--redis-max", dest="redis_max", default=5, help="max size for redis pool")
+    config: Dict = vars(parser.parse_args())
+    return config
+
+

@@ -1,9 +1,9 @@
 import asyncio
 from signal import SIGINT, SIGTERM
-from typing import List
+from typing import List, Dict
 import logging
 from urllookup.server_app import ServerApp
-from urllookup.utils import signal_handler
+from urllookup.utils import signal_handler, load_config
 
 logger = logging.getLogger(__package__)
 logger.debug('core module loaded')
@@ -12,13 +12,15 @@ def main():
     """
     Here we create our ServerApp, set signals handlers, and manage main execution of event loop.
     """
+    config: Dict = load_config()
+
     # get the current event loop
     loop = asyncio.get_event_loop()
     num_servers: int = 1
 
     server_apps: List = []
     for i in range(num_servers):
-        server_apps.append(ServerApp(port=9001+i))
+        server_apps.append(ServerApp(config))
         loop.create_task(server_apps[i].start())
 
     # turn on debugging TODO: Figure out where this goes

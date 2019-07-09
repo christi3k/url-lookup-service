@@ -3,11 +3,12 @@ from aiohttp import web
 from aiohttp.web_urldispatcher import UrlDispatcher
 import aioredis
 import logging
+from typing import Dict
 from urllookup.route_handlers import RouteHandler
 
 logger = logging.getLogger(__package__)
 
-async def get_app() -> web.Application:
+async def get_app(config: Dict) -> web.Application:
     """
     Set up the web app that our AppRunner (ServerApp) will serve.
 
@@ -22,7 +23,11 @@ async def get_app() -> web.Application:
 
     handler = RouteHandler()
 
-    conf = {'host':'127.0.0.1', 'port': 6379, 'minsize':1, 'maxsize':5}
+    conf = {'host': config['redis_host'],
+            'port': config['redis_port'],
+            'minsize': config['redis_min'],
+            'maxsize': config['redis_max']}
+
     redis_pool = await setup_redis(app, conf)
     handler.set_processor(redis_pool)
     await set_routes(router, handler)
