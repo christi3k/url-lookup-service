@@ -30,16 +30,6 @@ class RouteHandlerTestCase(unittest.TestCase):
 
     @unittest_run_loop
     @patch('urllookup.route_handlers.web.Request', autospec=True)
-    async def test_handle(self, mock_webrequest):
-        mock_webrequest.match_info.get.return_value = 'Christie'
-        response = await self.handler.handle(mock_webrequest)
-        mock_webrequest.match_info.get.assert_called_with('name', 'Anonymous')
-        self.assertEqual(response.status, 200)
-        self.assertEqual(response.text, 'Hello, Christie')
-        self.assertEqual(response.reason, 'OK')
-
-    @unittest_run_loop
-    @patch('urllookup.route_handlers.web.Request', autospec=True)
     async def test_catchall(self, mock_webrequest):
         """
         RouteHandler.catchall returns a 404 for all urls that don't already

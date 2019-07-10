@@ -10,15 +10,6 @@ class RouteHandler:
     def __init__(self, redis_pool) -> None:
         self._redis_pool: Any = redis_pool
 
-    async def handle(self, request: web.Request) -> web.Response:
-        """
-        Generic handler for a request, just to get us going.
-        """
-        name: str = request.match_info.get('name', "Anonymous")
-        logger.debug('Name: ' + name)
-        text: str = "Hello, " + name
-        return web.Response(text=text)
-
     async def catchall(self, request: web.Request) -> web.Response:
         """
         Handler for all routes not otherwise mapped.
