@@ -31,7 +31,7 @@ class ServerApp():
 
         We'll do this first in the event loop, with run_until_complete().
         """
-        app = await web_app.get_app(self.config)
+        app, handler = await web_app.get_app(self.config)
         self.runner = web.AppRunner(app)
         await self.runner.setup()
         site = web.TCPSite(self.runner, self.config['host'], self.config['port'])

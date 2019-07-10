@@ -8,9 +8,15 @@ class End2EndRedisTestCase(AioHTTPTestCase):
     async def get_application(self):
         """
         Override the get_app method to return your application.
+
+        This version of get_application also indicates that tests should be
+        skipped if unable to initialize the redis instance.
         """
         config: Dict = {'host': '127.0.0.1', 'port': '9001', 'redis_host': '127.0.0.1', 'redis_port': '6379', 'redis_min': 1, 'redis_max': 5, 'no_redis': False}
-        app = await urllookup.web_app.get_app(config)
+        app, handler = await urllookup.web_app.get_app(config)
+        if handler._redis_pool is None:
+            self.skipTest('unable to create redis pool')
+
         return app
 
     @unittest_run_loop
@@ -63,7 +69,7 @@ class End2EndLocalTestCase(AioHTTPTestCase):
         Override the get_app method to return your application.
         """
         config: Dict = {'host': '127.0.0.1', 'port': '9001', 'redis_host': '127.0.0.1', 'redis_port': '6379', 'redis_min': 1, 'redis_max': 5, 'no_redis': True}
-        app = await urllookup.web_app.get_app(config)
+        app, handler = await urllookup.web_app.get_app(config)
         return app
 
     @unittest_run_loop

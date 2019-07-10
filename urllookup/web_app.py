@@ -1,14 +1,15 @@
+import sys
 import asyncio
 from aiohttp import web
 from aiohttp.web_urldispatcher import UrlDispatcher
 import aioredis
 import logging
-from typing import Dict
+from typing import Dict, Tuple
 from urllookup.route_handlers import RouteHandler
 
 logger = logging.getLogger(__package__)
 
-async def get_app(config: Dict) -> web.Application:
+async def get_app(config: Dict) -> Tuple[web.Application, RouteHandler]:
     """
     Set up the web app that our AppRunner (ServerApp) will serve.
 
@@ -29,13 +30,17 @@ async def get_app(config: Dict) -> web.Application:
                 'port': config['redis_port'],
                 'minsize': config['redis_min'],
                 'maxsize': config['redis_max']}
-
-        redis_pool = await setup_redis(app, conf)
+        try:
+            redis_pool = await setup_redis(app, conf)
+        except ConnectionRefusedError as e:
+            print('Unable to create redis pool:')
+            print(e)
+            redis_pool = None
 
     handler = RouteHandler(redis_pool)
     await set_routes(router, handler)
 
-    return app
+    return (app, handler)
 
 async def set_routes(router: UrlDispatcher, handler: RouteHandler) -> None:
     """
@@ -52,6 +57,7 @@ async def setup_redis(app, conf) -> None:
     Includes appending the closing of redis to app's on_cleanup.
     """
     loop = asyncio.get_event_loop()
+
     pool = await aioredis.create_redis_pool(
         (conf['host'], conf['port']),
         minsize=conf['minsize'],
