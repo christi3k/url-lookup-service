@@ -1,11 +1,25 @@
+## About
+
+This project is a proof-of-concept exercise to demonstrate a highly available URL lookup service using Python. It utilizes asynio, aiohttp, and aioredis.
+
+Clients request URL information via GET requests to a URL of the form: 
+
+```
+/urlinfo/1/{host_and_port}/{path_and_qs}
+```
+
+For the purposes of this exercise, http and https URLs are considered the same.
+
 ## Installation
 
-**Prerequisites:**
+### Prerequisites
 
 - Python 3.7 environment. Using something like virtualenv highly recommended.
 - MacOS or Linux-based OS. (Tested on macOS Mojave 10.14.5 and Ubuntu 18.04.)
 - Git client.
 - Terminal client.
+
+### Install urllookup
 
 1. Open a terminal window and clone the repository and change into it:
 
@@ -15,7 +29,7 @@ $ git clone https://github.com/christi3k/url-lookup-service.git
 $ cd url-lookup-service
 ```
 
-2. (Optional) Set up your python virutual environment. If you're not using a virtual environment, skip this step. 
+2. (Optional) Set up your python virtual environment. If you're not using a virtual environment, skip this step. 
 
 Here's how you set up the environment using virtualenv:
 
@@ -25,7 +39,7 @@ $ virtualenv .venv -p python3
 $ source .venv/bin/activate
 ```
 
-Once the vitualenv is activated, you should see `(.venv)` prefixed to your prompt.
+Once the vitualenv is activated, you should see `(.venv)` prefixed to your prompt. You only need to _create_ the virtualenv once, but typically you'll need to activate it each time you're working in a new shell.
 
 3. Install required modules via pip:
 
@@ -37,13 +51,37 @@ $ pip install -r requirements.txt
 
 If you wish to use the supplied `docker_compose.yml` for running a test Redis instance, you'll need to have Docker installed.
 
-On macOS, you'll want [Docker Desktop](https://download.docker.com/mac/stable/Docker.dmg). Instructions for installing docker on Linux vary. Here are instructiosn for [Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04).
+On macOS, you'll want [Docker Desktop](https://download.docker.com/mac/stable/Docker.dmg). Instructions for installing docker on Linux vary. Here are instructions for [Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04).
 
 ## Usage
 
-### Starting
+### Starting redis via docker (optional)
 
-To start the service:
+If you'd like to use Docker to run a local redis instance, run:
+
+```
+$ docker-compose -f docker-compose.yml up -d redis
+```
+
+And if you'd like to interact with the Redis instance (e.g. to read or write test data), you can do so with:
+
+```
+$ docker exec -it container-name redis-cli
+```
+
+(Get the name of the running container with `docker ps`.)
+
+If you elect to use the local redis instance, you'll probably some some test data to work with:
+
+```
+$ python load-test-data.py
+```
+
+This will load the urls from `urllookup/utils.py:get_test_urls()` into the running redis instance. This same url list is what is used for the fallback, local lookup service.
+
+### Starting urllookup service
+
+To start the urllookup service:
 
 ```
 $ python run.py
@@ -51,7 +89,15 @@ $ python run.py
 
 This will start the url-lookup service on the default host of `127.0.0.1` and port `9001`. The service is also configured by default to query a Redis cluster for url information at `127.0.0.1` and port `6379` with a min pool size of 1 and max of 5.
 
-Each of these values can be overrided via the command line. Use `python run.py --help` to see help documentation.
+Each of these values can be overridden via the command line. Use `python run.py --help` to see help documentation.
+
+To run the urllookup service without a redis cluster, use:
+
+```
+$ python run.py --no-redis true
+```
+
+Note: If urllookup cannot connect to redis upon starting up, it will fallback to using the local lookup option.
 
 ### Checking urls
 
@@ -115,11 +161,11 @@ As an additional confirmation, the URL checked is indicated via the `url_checked
 
 All calls to `/urlinfo/1/` should return **HTTP 200: OK** regardless of the status of the destination URL. Other response codes indicate errors in the service (or other conditions as indicated by the HTTP code).
 
-### Testing and type checking
+## Testing and type checking
 
 urllookup includes unit tests using Python's [unittest](https://docs.python.org/3/library/unittest.html) as well as static type checking with [mypy](https://mypy.readthedocs.io/en/latest/).
 
-#### Running unit tests
+### Running unit tests
 
 To run all of urllookup's unit tests:
 
@@ -136,7 +182,7 @@ You can also run specific unit tests. For example, to run only the End2EndLocalT
 python -m unittest tests.test_end_to_end.End2EndLocalTestCase
 ```
 
-#### Static type checking
+### Static type checking
 
 To do basic type checking with mypy use:
 
@@ -150,3 +196,12 @@ You can also check all of urllookup's code with:
 $ mypy -m urllookup
 ```
 
+### Load testing
+
+In the root of the project directory you'll find `urls-to-test.txt`, which includes a list of urls you can use for load or smoke testing.
+
+I've been using Siege for very basic load testing:
+
+```
+$ siege -c100 -r40 -f ./urls-to-test.txt
+```

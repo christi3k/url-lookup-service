@@ -25,7 +25,6 @@ def get_test_urls() -> List:
         ('mazilla.org:80/actuallybad.html?areyousure=yes', b'DISALLOW'),
         ('phishing4ever:443/index.html', b'DISALLOW'),
         ('capital0ne.ru:8080/download.html', b'DISALLOW'),
-        ('capitalone.com:443',b'ALLOW'),
         ('capitalone.com:443/index.html',b'ALLOW'),
         ('nestedsite.com:443/one/two/three/index.html',b'ALLOW'),
         ('goodsite.com:80/index.html?newuser=yes',b'ALLOW'),

@@ -1,0 +1,12 @@
+http://127.0.0.1:9001/urlinfo/1/mozilla.org%3A80/index.html
+http://127.0.0.1:9001/urlinfo/1/mozilla.org%3A443/index.html
+http://127.0.0.1:9001/urlinfo/1/mazilla.org%3A80/actuallybad.html%3Fareyousure%3Dyes
+http://127.0.0.1:9001/urlinfo/1/phishing4ever%3A443/index.html
+http://127.0.0.1:9001/urlinfo/1/capital0ne.ru%3A8080/download.html
+http://127.0.0.1:9001/urlinfo/1/capitalone.com%3A443/index.html
+http://127.0.0.1:9001/urlinfo/1/nestedsite.com%3A443/one%2Ftwo%2Fthree%2Findex.html
+http://127.0.0.1:9001/urlinfo/1/goodsite.com%3A80/index.html%3Fnewuser%3Dyes
+http://127.0.0.1:9001/urlinfo/1/goodsite.com%3A443/sites%2Findex.html
+http://127.0.0.1:9001/urlinfo/1/washingtonpost.com%3A443/index.html
+http://127.0.0.1:9001/urlinfo/1/washingt0np0st.com%3A8080/nope.html
+http://127.0.0.1:9001/urlinfo/1/cnn.com%3A443/badstuff.html%3Fgivemeit%3Dyes
