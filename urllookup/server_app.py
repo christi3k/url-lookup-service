@@ -38,6 +38,7 @@ class ServerApp():
         logger.debug('Starting server on host: %s and port: %s', self.config['host'], self.config['port'])
         try:
             await site.start()
+            print("Started server on host: %s and port: %s" % (self.config['host'], self.config['port']))
         except OSError as e:
             print(e)
             sys.exit()
