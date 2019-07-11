@@ -53,6 +53,18 @@ If you wish to use the supplied `docker_compose.yml` for running a test Redis in
 
 On macOS, you'll want [Docker Desktop](https://download.docker.com/mac/stable/Docker.dmg). Instructions for installing docker on Linux vary. Here are instructions for [Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04).
 
+**Important:** If you decide to install and run docker on a public-facing server, be aware that by default, [Docker will add entries to IPtables.](https://fralef.me/docker-and-iptables.html). If you use the `docker-compose.yml` provided with this project, the redis instance will be available to everyone on the internet, even if you have already specified firewall rules against it. Furthermore, no authentication is required to connect to the redis server.
+
+Remedies vary depending on the operating system. On Ubuntu 18.04, do the following to tell Docker not to mess with IPtables:
+
+1. Create ``/etc/docker/daemon.json`` with: `{ "iptables": false }`.
+
+2. Then reload systemd config with `systemctl daemon-reload`.
+
+3. Reload firewall with `ufw reload`.
+
+4. Finally, restart docker with `systemctl restart docker`.
+
 ## Usage
 
 ### Starting redis via docker (optional)
